@@ -1,0 +1,117 @@
+/*顶部工具栏*/
+.tooltar {
+  padding-left: 10px;
+  box-sizing: border-box;
+  height: 42px;
+  line-height: 42px;
+  z-index: 3;
+  border-bottom: 1px solid #dadce0;
+}
+
+.jtk-overlay {
+  cursor: pointer;
+  color: #4a4a4a;
+}
+
+/*节点左侧的竖线*/
+.node-left {
+  width: 4px;
+  background-color: #1879ff;
+  border-radius: 4px 0 0 4px;
+}
+
+/*节点右侧的图标*/
+.node-right-ico {
+  visibility: hidden;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  color: #84cf65;
+  cursor: default;
+}
+
+.el-icon-error {
+  font-size: 16px;
+  color: #1890ff;
+  cursor: pointer;
+}
+
+.el-node-state-warning {
+  line-height: 32px;
+  position: absolute;
+  right: 5px;
+  color: #e6a23c;
+  cursor: default;
+}
+
+.el-node-state-running {
+  line-height: 32px;
+  position: absolute;
+  right: 5px;
+  color: #84cf65;
+  cursor: default;
+}
+
+/*node-form*/
+.node-form-header {
+  height: 32px;
+  border-top: 1px solid #dce3e8;
+  border-bottom: 1px solid #dce3e8;
+  background: #f1f3f4;
+  color: #000;
+  line-height: 32px;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.node-form-body {
+  margin-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 20px;
+}
+
+/* 连线中的label 样式*/
+.jtk-overlay.flowLabel:not(.aLabel) {
+  padding: 4px 10px;
+  background-color: white;
+  color: #565758 !important;
+  border: 1px solid #e0e3e7;
+  border-radius: 5px;
+}
+
+.dot {
+  background-color: #1879ff;
+  border-radius: 10px;
+}
+
+.dot-hover {
+  background-color: red;
+}
+
+.rectangle {
+  background-color: #1879ff;
+}
+
+.line-delete {
+  visibility: hidden;
+}
+
+.line-delete.jtk-hover {
+  visibility: visible;
+}
+
+.rectangle-hover {
+  background-color: red;
+}
+
+.drop-hover {
+  border: 1px dashed #1879ff;
+}
+
+.el-data-collision-table {
+  width: 17px;
+  height: 20px;
+  background: url(../el-data-collision-table.png) center no-repeat;
+  background-size: contain;
+  margin-right: 10px;
+}
