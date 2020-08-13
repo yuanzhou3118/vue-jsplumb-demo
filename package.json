@@ -1,7 +1,6 @@
 {
-  "name": "vue-jsplumb",
+  "name": "vue-element-jsplumb",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -26,6 +25,7 @@
     "@vue/cli-plugin-eslint": "^4.4.0",
     "@vue/cli-service": "^4.4.0",
     "@vue/composition-api": "^0.6.7",
+    "all-contributors-cli": "^6.17.0",
     "babel-eslint": "^10.1.0",
     "babel-preset-vca-jsx": "^0.3.5",
     "eslint": "^7.6.0",
@@ -66,5 +66,23 @@
       "prettier --check",
       "git add"
     ]
-  }
+  },
+  "description": "[![Netlify Status](https://api.netlify.com/api/v1/badges/22abb001-5af4-4c8e-ba58-47d57fd3b801/deploy-status)](https://app.netlify.com/sites/vue-jsplumb/deploys)",
+  "main": ".eslintrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuanzhou3118/vue-jsplumb.git"
+  },
+  "keywords": [
+    "vue",
+    "jsplumb",
+    "element-ui",
+    "mockjs"
+  ],
+  "author": "site_zhou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yuanzhou3118/vue-jsplumb/issues"
+  },
+  "homepage": "https://github.com/yuanzhou3118/vue-jsplumb#readme"
 }
