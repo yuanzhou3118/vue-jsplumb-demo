@@ -4,9 +4,9 @@ import CompositionApi from '@vue/composition-api';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
+require('./mock/index');
 Vue.use(ElementUI, { size: 'small' });
 Vue.use(CompositionApi);
-require('./mock/index');
 Vue.config.productionTip = false;
 
 new Vue({

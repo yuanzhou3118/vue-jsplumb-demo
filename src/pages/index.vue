@@ -4,11 +4,7 @@
       <div class="left-part">
         <div class="panel__title">数据源</div>
         <nodeMenu
-          :status="
-            this.canvasTabList.find((item) => item.id == this.canvasActiveId) &&
-              this.canvasTabList.find((item) => item.id == this.canvasActiveId)
-                .status
-          "
+          :status="activeTabItem && activeTabItem.status"
           @addNode="addNode"
           ref="nodeMenu"
         ></nodeMenu>
@@ -31,6 +27,7 @@
           class="panel-container__tabs"
           v-model="canvasActiveId"
           type="card"
+          @tab-click="tabClick"
           closable
         >
           <el-tab-pane
@@ -156,30 +153,16 @@
         </el-tabs>
         <div
           class="result-component"
-          :class="
-            this.canvasTabList.find((item) => item.id == this.canvasActiveId) &&
-            this.canvasTabList.find((item) => item.id == this.canvasActiveId)
-              .status
-              ? `readOnly`
-              : ``
-          "
+          :class="activeTabItem && activeTabItem.status ? `readOnly` : ``"
           ref="calculators"
         >
           <template>
             <draggable
               v-model="calculators"
-              :draggable="
-                this.canvasTabList.find(
-                  (item) => item.id == this.canvasActiveId,
-                ) &&
-                this.canvasTabList.find(
-                  (item) => item.id == this.canvasActiveId,
-                ).status
-                  ? null
-                  : `.moveCalculator`
-              "
+              :draggable="`.moveCalculator`"
               @end="endCalculators"
-              :options="draggableOptions"
+              v-bind="draggableOptions"
+              :disabled="activeTabItem && activeTabItem.status ? true : false"
             >
               <div
                 :class="[
@@ -195,86 +178,16 @@
             </draggable>
           </template>
         </div>
-        <div
-          class="flow-button-group"
+        <Tools
           v-show="!isFullScreen"
-          v-if="
-            this.canvasTabList.find((item) => item.id == this.canvasActiveId) &&
-              this.canvasTabList.find((item) => item.id == this.canvasActiveId)
-                .data.nodeList.length > 0
-          "
-        >
-          <div
-            v-if="
-              this.canvasTabList.find(
-                (item) => item.id == this.canvasActiveId,
-              ) &&
-                !this.canvasTabList.find(
-                  (item) => item.id == this.canvasActiveId,
-                ).status
-            "
-            class="flow-button-group__item"
-            @click.stop="resetFlowContainer"
-          >
-            <svg
-              t="1595660240940"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="2636"
-              width="200"
-              height="200"
-            >
-              <path
-                d="M983.964 953.145 846.307 953.145c-21.721 0-39.33-17.575-39.33-39.249L806.977 796.141c0-21.677 17.609-39.249 39.33-39.249l39.33 0L885.637 580.263c0-21.679-17.607-39.251-39.33-39.251L531.664 541.012l0 215.88 39.332 0c21.721 0 39.33 17.572 39.33 39.249l0 117.756c0 21.674-17.609 39.249-39.33 39.249L433.34 953.146c-21.723 0-39.33-17.575-39.33-39.249L394.01 796.141c0-21.677 17.607-39.249 39.33-39.249l39.33 0 0-215.88L177.693 541.012c-21.721 0-39.33 17.572-39.33 39.251l0 176.629 39.33 0c21.721 0 39.33 17.572 39.33 39.249l0 117.756c0 21.674-17.609 39.249-39.33 39.249L40.036 953.146c-21.721 0-39.33-17.575-39.33-39.249L0.706 796.141c0-21.677 17.609-39.249 39.33-39.249l39.33 0L79.366 560.636c0-43.355 35.219-78.502 78.663-78.502L472.67 482.134 472.67 266.257l-39.33 0c-21.723 0-39.33-17.575-39.33-39.253L394.01 109.252c0-21.679 17.607-39.251 39.33-39.251l137.657 0c21.721 0 39.33 17.572 39.33 39.251l0 117.751c0 21.679-17.609 39.253-39.33 39.253l-39.332 0 0 215.878 334.309 0c43.441 0 78.66 35.147 78.66 78.502l0 196.255 39.33 0c21.721 0 39.33 17.572 39.33 39.249l0 117.756C1023.294 935.571 1005.684 953.145 983.964 953.145z"
-                p-id="2637"
-              ></path>
-            </svg>
-          </div>
-          <div
-            class="flow-button-group__item"
-            :class="{ disabled: !isCanZoomAdd }"
-            @click.stop="isCanZoomAdd ? zoomAdd() : null"
-          >
-            <svg
-              t="1595660649648"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="7457"
-              width="200"
-              height="200"
-            >
-              <path
-                d="M926.72 829.44q28.672 32.768 31.232 57.344t-18.944 48.128q-24.576 27.648-54.272 26.112t-57.344-24.064l-164.864-158.72q-46.08 30.72-99.84 47.616t-113.152 16.896q-80.896 0-151.552-30.72t-123.392-83.456-82.944-123.392-30.208-151.552q0-79.872 30.208-150.528t82.944-123.392 123.392-83.456 151.552-30.72 151.552 30.72 123.392 83.456 83.456 123.392 30.72 150.528q0 61.44-17.92 116.736t-49.664 101.376q13.312 14.336 37.376 38.4t48.128 48.64 44.544 44.032zM449.536 705.536q53.248 0 100.352-19.968t81.92-54.784 54.784-81.92 19.968-100.352-19.968-100.352-54.784-81.92-81.92-54.784-100.352-19.968-99.84 19.968-81.408 54.784-55.296 81.92-20.48 100.352 20.48 100.352 55.296 81.92 81.408 54.784 99.84 19.968zM512 384l128 0 0 128-128 0 0 128-129.024 0 0-128-126.976 0 0-128 126.976 0 0-128 129.024 0 0 128z"
-                p-id="7458"
-              ></path>
-            </svg>
-          </div>
-          <div
-            class="flow-button-group__item"
-            :class="{ disabled: !isCanZoomMinus }"
-            @click.stop="isCanZoomMinus ? zoomMinus() : null"
-          >
-            <svg
-              t="1595660656545"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="7595"
-              width="200"
-              height="200"
-            >
-              <path
-                d="M927.744 829.44q28.672 32.768 31.232 57.344t-18.944 48.128q-24.576 27.648-54.272 26.112t-57.344-24.064l-164.864-157.696q-46.08 29.696-99.84 46.592t-113.152 16.896q-80.896 0-151.552-30.72t-123.392-83.456-82.944-123.392-30.208-151.552q0-79.872 30.208-150.528t82.944-123.392 123.392-83.456 151.552-30.72 151.552 30.72 123.392 83.456 83.456 123.392 30.72 150.528q0 61.44-17.92 116.736t-49.664 102.4l36.864 37.888q24.576 23.552 48.64 48.128t43.52 44.032zM450.56 705.536q53.248 0 100.352-19.968t81.92-54.784 54.784-81.92 19.968-100.352-19.968-100.352-54.784-81.92-81.92-54.784-100.352-19.968-99.84 19.968-81.408 54.784-55.296 81.92-20.48 100.352 20.48 100.352 55.296 81.92 81.408 54.784 99.84 19.968zM256 384l385.024 0 0 128-385.024 0 0-128z"
-                p-id="7596"
-              ></path>
-            </svg>
-          </div>
-        </div>
+          v-if="activeTabItem && activeTabItem.data.nodeList.length > 0"
+          @changeZoom="changeZoom"
+          :zoom.sync="activeTabItem.zoom"
+          :status="activeTabItem.status"
+          @resetFlowContainer="resetFlowContainer"
+          :isCanZoomAdd.sync="isCanZoomAdd"
+          :isCanZoomMinus.sync="isCanZoomMinus"
+        ></Tools>
         <div class="button-group">
           <el-button @click="clearCanvas" :disabled="!isCanClear" type="warning"
             >清除画布</el-button
@@ -305,11 +218,7 @@
       v-if="calculatorDialogVisible"
       @confirm="handleCalculatorData"
       :data="calculatorDialogData"
-      :status="
-        this.canvasTabList.find((item) => item.id == this.canvasActiveId) &&
-          this.canvasTabList.find((item) => item.id == this.canvasActiveId)
-            .status
-      "
+      :status="activeTabItem && activeTabItem.status"
       :calculatorDialogVisible.sync="calculatorDialogVisible"
     ></calculator-dialog>
   </div>
@@ -318,14 +227,14 @@
 import draggable from 'vuedraggable';
 import { jsPlumb } from 'jsplumb';
 import Drawer from '../components/drawer';
-import { createJob, editJob } from '../request/index';
-import { easyFlowMixin } from '../util/mixins';
+import Tools from '../components/panelTools';
 import calculatorDialog from '../components/calculatorDialog';
 import nodeMenu from '../components/nodeMenu';
 import taskList from '../components/taskList';
-import { calculators, draggableOptions, dataInit } from '../util/enum';
-import * as utils from '../util/util';
 import flowNode from '../components/flowNode';
+import { calculators, draggableOptions, dataInit } from '../util/enum';
+import { easyFlowMixin } from '../util/mixins';
+import * as utils from '../util/util';
 export default {
   name: 'panel',
   mixins: [easyFlowMixin],
@@ -373,6 +282,10 @@ export default {
       canvasActiveId: '',
       canvasTabList: [],
 
+      //数据预览
+      activeCondition: null,
+      dataDetailComponent: false,
+
       //画布初始化数据
       dataInit,
 
@@ -380,10 +293,9 @@ export default {
       calculatorDialogVisible: false,
       calculatorDialogData: null,
 
-      //query携带jobId
-      jobId: null,
-
+      isCanSave: false,
       isCanClear: false,
+      isCanRun: false,
       isShowNewTaskNotice: true,
       isCanZoomAdd: true,
       isCanZoomMinus: true,
@@ -407,6 +319,7 @@ export default {
     taskList,
     draggable,
     calculatorDialog,
+    Tools,
   },
   directives: {
     flowDrag: {
@@ -453,8 +366,10 @@ export default {
             this.resetCanvasData();
           } else {
             if (this.canvasTabList.length == 0) {
+              this.isCanSave = false;
               this.isCanClear = false;
               this.isShowNewTaskNotice = true;
+              this.isCanRun = false;
               return;
             }
           }
@@ -462,12 +377,28 @@ export default {
       }
     },
   },
+  computed: {
+    activeTabItem() {
+      return (
+        this.canvasTabList.find((item) => item.id == this.canvasActiveId) ||
+        null
+      );
+    },
+    activeTabIndex() {
+      return this.canvasTabList.findIndex(
+        (item) => item.id == this.canvasActiveId,
+      );
+    },
+  },
+  created() {
+    //初始化
+    this.jsPlumb = jsPlumb.getInstance();
+    this.jsPlumb.ready(() => {
+      // 导入默认配置
+      this.jsPlumb.importDefaults(this.jsplumbSetting);
+    });
+  },
   async mounted() {
-    // if (!this.jobId) {
-    //   this.addTab();
-    // } else {
-    //   // to do 回显
-    // }
     window.onresize = () => {
       this.jsPlumb.setSuspendDrawing(false, true);
     };
@@ -475,10 +406,7 @@ export default {
   methods: {
     mouseWheelAction(ev) {
       const deltay = ev.deltaY;
-      const tabIndex = this.canvasTabList.findIndex(
-        (tab) => tab.id == this.canvasActiveId,
-      );
-
+      const tabIndex = this.activeTabIndex;
       if (this.canvasTabList[tabIndex].zoom <= 0.1 && deltay > 0) {
         this.isCanZoomMinus = false;
         return;
@@ -538,28 +466,33 @@ export default {
         }).then(() => {
           this.canvasTabList = [];
           this.canvasActiveId = null;
+          this.isCanSave = false;
           this.isCanClear = false;
           this.isShowNewTaskNotice = true;
+          this.isCanRun = false;
         });
       } else {
         this.canvasTabList = [];
         this.canvasActiveId = null;
+        this.isCanSave = false;
         this.isCanClear = false;
         this.isShowNewTaskNotice = true;
+        this.isCanRun = false;
       }
     },
+    tabClick(tab) {
+      console.log(tab);
+    },
     async resetFlowContainer() {
-      let { data, id } = this.canvasTabList.find(
+      let { data, zoom, id } = this.canvasTabList.find(
         (tabItem) => tabItem.id == this.canvasActiveId,
       );
-      let tabIndex = this.canvasTabList.findIndex(
-        (tabItem) => tabItem.id == this.canvasActiveId,
-      );
+
+      const tabIndex = this.activeTabIndex;
       this.$set(this.canvasTabList, tabIndex, {
         ...this.canvasTabList[tabIndex],
         zoom: 1,
       });
-
       this.jsPlumb.setZoom(1);
       await this.$nextTick();
       //重置所有 绝对定位信息
@@ -567,158 +500,19 @@ export default {
       flowContainer.style.top = 0;
       flowContainer.style.left = 0;
       const containerRect = flowContainer.getBoundingClientRect();
-      this.getTreeConstruction(data, id);
-    },
-    async getTreeConstruction(data, id) {
-      const endPoints = new Set();
-      data.lineList.forEach((line) => {
-        endPoints.add(line.to);
-      });
-
-      for (let item of endPoints.values()) {
-        const isChild = data.lineList.find((line) => line.from == item);
-        if (isChild) {
-          endPoints.delete(item);
-        }
-      }
-      if ((endPoints.size && endPoints.size > 1) || !endPoints) {
-        return this.$message.error('请连接完整！');
-      }
-      const endPoint = [...endPoints][0];
-      const endingNode = data.nodeList.find(
-        (nodeItem) => nodeItem.id == endPoint,
-      );
-      endingNode.level = 1;
-      endingNode.sort = 1;
-      const treeList = {
-        id: endPoint,
-        children: [],
-        levelCount: 1,
-        level: 1,
-      };
-      //找到终结点，开始递归children
-      treeList.children = this.getChildrenById(endPoint, data, 1, 1);
-      this.changeNodePosition(data, endingNode.level, id, 0);
+      await utils.getTreeConstruction(data, id);
+      utils.changeNodePosition(containerRect, data, 1, 0);
       await this.$nextTick();
+      // this.jsPlumb.repaintEverything();
       this.jsPlumb.setSuspendDrawing(false, true);
     },
-    changeNodePosition(data, level, id, preWidth) {
-      const defaultTableWidth = 350;
-      const defaultOtherWidth = 65;
-      const defaultHeight = 70;
-      const paddingTop = 20;
-      const paddingLeft = 40;
-      const defaultAllHeight = defaultHeight + paddingTop * 2;
-      const defaultAllTableWidth = defaultTableWidth + paddingLeft * 2;
-      const defaultAllOtherWidth = defaultOtherWidth + paddingLeft * 2;
-      const flowContainer = this.$refs[`flowContainer_${id}`][0];
-      const { width, height } = flowContainer.getBoundingClientRect();
-      const sameLevelNodeList = data.nodeList.filter(
-        (nodeItem) => nodeItem.level == level,
-      );
-      const levelCount = sameLevelNodeList.length;
-      if (levelCount == 0) {
-        return;
-      }
-
-      let currentWidth = defaultAllOtherWidth + preWidth;
-      const isHaveTable = sameLevelNodeList.find(
-        (node) => node.type == 'table',
-      );
-      if (isHaveTable) {
-        currentWidth = defaultAllTableWidth + preWidth;
-      }
-
-      sameLevelNodeList.forEach(async (node) => {
-        let calTop = 0;
-        if (levelCount % 2) {
-          const middleSort = parseInt(levelCount / 2) + 1;
-          //奇数
-          calTop =
-            height / 2 -
-            defaultAllHeight / 2 -
-            (middleSort - node.sort) * defaultAllHeight +
-            paddingTop;
-        } else {
-          const middleSort = parseInt(levelCount / 2);
-          //偶数
-          calTop =
-            height / 2 -
-            (middleSort - node.sort + 1) * defaultAllHeight +
-            paddingTop;
-        }
-        const calLeft = width - currentWidth + paddingLeft;
-        node.top = `${calTop}px`;
-        node.left = `${calLeft}px`;
-        await this.$nextTick();
-      });
-
-      this.changeNodePosition(data, level + 1, id, currentWidth);
-    },
-    getChildrenById(parentId, data, level, sort) {
-      const childrenList = [];
-      const childRelation = data.lineList.filter((line) => line.to == parentId);
-      if (childRelation) {
-        level = level + 1;
-        childRelation.forEach((child, index) => {
-          const node = data.nodeList.find(
-            (nodeItem) => nodeItem.id == child.from,
-          );
-          const childSort = index + 1 + (sort - 1) * 2;
-          let childrenChildList = this.getChildrenById(
-            child.from,
-            data,
-            level,
-            childSort,
-          );
-          node.level = level;
-          node.sort = childSort;
-          childrenList.push({
-            id: child.from,
-            level,
-            children: childrenChildList,
-            levelCount: 0,
-          });
-        });
-      }
-
-      return childrenList;
-    },
-    zoomAdd() {
-      let tabIndex = this.canvasTabList.findIndex(
-        (tabItem) => tabItem.id == this.canvasActiveId,
-      );
-      if (this.canvasTabList[tabIndex].zoom > 0.1) {
-        this.isCanZoomMinus = true;
-      }
-      if (this.canvasTabList[tabIndex].zoom >= 4) {
-        this.isCanZoomAdd = false;
-        return;
-      }
-      this.isCanZoomAdd = true;
+    changeZoom(zoom) {
+      const tabIndex = this.activeTabIndex;
       this.$set(this.canvasTabList, tabIndex, {
         ...this.canvasTabList[tabIndex],
-        zoom: this.canvasTabList[tabIndex].zoom + 0.1,
+        zoom,
       });
-      this.jsPlumb.setZoom(this.canvasTabList[tabIndex].zoom);
-    },
-    zoomMinus() {
-      let tabIndex = this.canvasTabList.findIndex(
-        (tabItem) => tabItem.id == this.canvasActiveId,
-      );
-      if (this.canvasTabList[tabIndex].zoom < 4) {
-        this.isCanZoomAdd = true;
-      }
-      if (this.canvasTabList[tabIndex].zoom <= 0.1) {
-        this.isCanZoomMinus = false;
-        return;
-      }
-      this.isCanZoomMinus = true;
-      this.$set(this.canvasTabList, tabIndex, {
-        ...this.canvasTabList[tabIndex],
-        zoom: this.canvasTabList[tabIndex].zoom - 0.1,
-      });
-      this.jsPlumb.setZoom(this.canvasTabList[tabIndex].zoom);
+      this.jsPlumb.setZoom(zoom);
     },
     changeTab(id) {
       const tab = this.canvasTabList.find((tabItem) => tabItem.id == id);
@@ -726,16 +520,36 @@ export default {
       this.isFirstSave = false;
       this.canvasActiveId = `${id}`;
     },
+    // async saveForDraft() {
+    //   const activeTab = this.activeTabItem;
+    //   if (activeTab.data.nodeList.length == 0) {
+    //     return this.$message.error('不能保存空画布！');
+    //   }
+
+    //   await this.$nextTick();
+    //   const result = await this.createAction();
+    //   if (result) {
+    //     this.isShowTaskList = true;
+    //     this.$refs.taskList.searchNoRunTask();
+    //   }
+    // },
     async resetCanvasData() {
       this.isFullScreen = false;
       if (this.canvasTabList.length == 0) {
+        this.isCanSave = false;
         this.isCanClear = false;
         this.isShowNewTaskNotice = true;
+        this.isCanRun = false;
         return;
       }
       const { status, id, data } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
+      if (!status) {
+        this.isCanSave = true;
+      } else {
+        this.isCanSave = false;
+      }
       if (status == null) {
         this.isCanClear = true;
       } else {
@@ -746,16 +560,21 @@ export default {
       } else {
         this.isShowNewTaskNotice = false;
       }
-      this.jobId = `${id}`;
+      if (!status) {
+        this.isCanRun = true;
+      } else {
+        this.isCanRun = false;
+      }
       // this.jsPlumb.repaintEverything(false, true);
       // this.jsPlumb.repaintEverything();
       await this.$nextTick();
+      console.log('reload');
       this.dataReload();
     },
     updateTaskTotal(val) {
       this.taskTotal = val;
     },
-    setCondition({ condition, tempId }) {
+    setCondition({ tableId, condition, tempId }) {
       const { data } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
@@ -769,7 +588,6 @@ export default {
         return this.$message.error('已经打开过了！');
       }
 
-      this.jobId = `${id}`;
       const data = utils.handleEchoJobData(jobContent);
       this.canvasTabList.push({
         name: jobContent.name,
@@ -806,7 +624,7 @@ export default {
       });
     },
     async clearCanvas() {
-      const { data, status } = this.canvasTabList.find(
+      const { data, id, status } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
       data.lineList = [];
@@ -833,41 +651,51 @@ export default {
       }
       return nums;
     },
-    async createAction() {
-      return new Promise(async (resolve) => {
-        const tab = this.canvasTabList.find(
-          (item) => item.id == this.canvasActiveId,
-        );
-        const params = {
-          name: tab.name,
-          elementList: utils.getElementList(tab.data),
-          elementRelList: utils.getElementRelList(tab.data.lineList),
-        };
-        try {
-          if (tab.status == 0) {
-            this.isFirstSave = false;
-            //编辑任务 status一定是 0
-            const { data } = await editJob({ ...params, id: tab.id });
-            tab.id = data;
-          } else {
-            this.isFirstSave = true;
-            const { data } = await createJob(params);
-            tab.id = data;
-            tab.status = 0;
-            this.canvasActiveId = `${data}`;
-          }
-          await this.$nextTick();
-          tab.data = JSON.parse(JSON.stringify(tab.data));
-          tab.deepCloneData = JSON.parse(JSON.stringify(tab.data));
-          this.$message.success('保存方案成功！');
-          resolve(tab.id);
-        } catch (err) {
-          resolve(err);
-          console.log(err);
-          this.$message.error('保存方案失败！');
-        }
-      });
-    },
+    // async createAction() {
+    //   return new Promise(async (resolve, reject) => {
+    //     const tab = this.canvasTabList.find(
+    //       (item) => item.id == this.canvasActiveId,
+    //     );
+
+    //     const tabIndex = this.activeTabIndex;
+    //     if (tab.status == null) {
+    //       const checkMsg = await checkTaskName({
+    //         jobName: tab.name,
+    //       });
+    //       if (checkMsg.data) {
+    //         return this.$message.error('任务名称重复！');
+    //       }
+    //     }
+    //     const params = {
+    //       name: tab.name,
+    //       elementList: utils.getElementList(tab.data),
+    //       elementRelList: utils.getElementRelList(tab.data.lineList),
+    //     };
+    //     try {
+    //       if (tab.status == 0) {
+    //         this.isFirstSave = false;
+    //         //编辑任务 status一定是 0
+    //         const { data } = await editJob({ ...params, id: tab.id });
+    //         tab.id = data;
+    //       } else {
+    //         this.isFirstSave = true;
+    //         const { data } = await createJob(params);
+    //         tab.id = data;
+    //         tab.status = 0;
+    //         this.canvasActiveId = `${data}`;
+    //       }
+    //       await this.$nextTick();
+    //       tab.data = JSON.parse(JSON.stringify(tab.data));
+    //       tab.deepCloneData = JSON.parse(JSON.stringify(tab.data));
+    //       this.$message.success('保存方案成功！');
+    //       resolve(tab.id);
+    //     } catch (err) {
+    //       resolve(err);
+    //       console.log(err);
+    //       this.$message.error('保存方案失败！');
+    //     }
+    //   });
+    // },
     async handleCalculatorData({
       colRelList,
       sourceFiledList,
@@ -974,11 +802,8 @@ export default {
           this.jsPlumb.makeTarget(`${node.id}`, this.jsplumbTargetOptions);
           this.jsPlumb.draggable(`${node.id}`, {
             containment: false,
-            stop: function() {
+            stop: function(el) {
               console.log('---------拖完了');
-            },
-            drag: () => {
-              this.jsPlumb.repaintEverything();
             },
           });
         }
@@ -996,11 +821,11 @@ export default {
         };
         this.jsPlumb.connect(connParam, this.jsplumbConnectOptions);
       }
-      console.log(this.jsPlumb.getAllConnections());
       this.$nextTick(function() {
         this.loadEasyFlowFinish = true;
       });
     },
+    //线上的删除功能
     isShowDelete(status) {
       const iDom = document.createElement('i');
       if (status) {
@@ -1011,9 +836,7 @@ export default {
       return iDom;
     },
     jsPlumbInit() {
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
+      const activeTab = this.activeTabItem;
       this.jsPlumb.ready(async () => {
         // 导入默认配置
         this.jsPlumb.importDefaults({
@@ -1036,7 +859,7 @@ export default {
         // 初始化节点
         this.loadEasyFlow();
         // 单点击了连接线, https://www.cnblogs.com/ysx215/p/7615677.html
-        this.jsPlumb.bind('click', (conn) => {
+        this.jsPlumb.bind('click', (conn, originalEvent) => {
           this.activeElement.type = 'line';
           this.activeElement.sourceId = conn.sourceId;
           this.activeElement.targetId = conn.targetId;
@@ -1128,6 +951,11 @@ export default {
               return false;
             }
 
+            if (!nodeFrom.sourceMap || nodeFrom.sourceMap.length == 0) {
+              this.$message.error('请至少选择一对映射关系连线！');
+              return false;
+            }
+
             //生成算子的表字段
             const calculatorsField = [];
             line.forEach((lineItem) => {
@@ -1142,6 +970,9 @@ export default {
                     id: this.getUUID(),
                     isOutputCol: false,
                     isShowInput: false,
+                    colLength: fieldItem.colLength,
+                    decimalLength: fieldItem.decimalLength,
+                    typeValue: fieldItem.typeValue,
                     tableUUId: nodeFrom.id,
                     fromEleId: nodeFrom.id,
                   });
@@ -1149,6 +980,7 @@ export default {
               });
             });
             nodeFrom.field = calculatorsField;
+            console.log(calculatorsField);
           }
 
           if (nodeTo.type == 'export' && nodeFrom.type == 'table') {
@@ -1215,6 +1047,7 @@ export default {
       const { data } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
+      const fromItem = data.nodeList.find((item) => item.id == from);
       const toItem = data.nodeList.find((item) => item.id == to);
       if (toItem.type == 'calculators') {
         this.clickNode({
@@ -1246,9 +1079,7 @@ export default {
     },
     // 删除激活的元素
     deleteElement() {
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
+      const activeTab = this.activeTabItem;
       if (activeTab.status) return;
       if (this.activeElement.type === 'line') {
         this.$confirm('确定删除所点击的线吗?', '提示', {
@@ -1288,9 +1119,7 @@ export default {
     },
     isHaveParent(nodeId) {
       let result = false;
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
+      const activeTab = this.activeTabItem;
       const node = activeTab.data.lineList.find((val) => val.from == nodeId);
       if (node) result = true;
       return result;
@@ -1300,10 +1129,8 @@ export default {
      * @param nodeId 被删除节点的ID
      */
     deleteNode(nodeId) {
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
-      const { lineList } = activeTab.data;
+      const activeTab = this.activeTabItem;
+      const { nodeList, lineList } = activeTab.data;
       //查验是否可以删除
       const relation = lineList.find((line) => line.from == nodeId);
       if (relation) {
@@ -1346,9 +1173,7 @@ export default {
       return true;
     },
     deleteRelationNode(nodeId) {
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
+      const activeTab = this.activeTabItem;
       const line = activeTab.data.lineList.filter((item) => item.to == nodeId);
       line.forEach((val) => {
         const node = activeTab.data.nodeList.find((v) => v.id == val.from);
@@ -1376,29 +1201,13 @@ export default {
      * @param mousePosition 鼠标拖拽结束的坐标
      */
     async addNode(evt, nodeMenu) {
-      if (this.canvasTabList.length == 0) {
-        this.addTab();
-      }
-      await this.$nextTick();
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
       let screenX = evt.originalEvent.clientX,
         screenY = evt.originalEvent.clientY;
-      const flowContainer = this.$refs[`flowContainer_${activeTab.id}`][0];
-      const canvasContainerRect = flowContainer.parentNode.getBoundingClientRect();
+      const canvasContainerRect = document
+        .querySelector('.panel-container .el-tabs__content')
+        .getBoundingClientRect();
       let left = screenX,
         top = screenY;
-
-      if (nodeMenu.type == 'export') {
-        const isHasExport = activeTab.data.nodeList.find(
-          (node) => node.type == 'export',
-        );
-        if (isHasExport) {
-          this.$message.error('画布中已经存在输出节点了，不能重复拖拽');
-          return;
-        }
-      }
       // 计算是否拖入到容器中
       if (
         left < canvasContainerRect.x ||
@@ -1410,6 +1219,23 @@ export default {
         this.$message.error('请把节点拖入到画布中');
         return;
       }
+      if (this.canvasTabList.length == 0) {
+        this.addTab();
+      }
+      await this.$nextTick();
+      const activeTab = this.activeTabItem;
+      const flowContainer = this.$refs[`flowContainer_${activeTab.id}`][0];
+      const containerRect = flowContainer.getBoundingClientRect();
+      if (nodeMenu.type == 'export') {
+        const isHasExport = activeTab.data.nodeList.find(
+          (node) => node.type == 'export',
+        );
+        if (isHasExport) {
+          this.$message.error('画布中已经存在输出节点了，不能重复拖拽');
+          return;
+        }
+      }
+
       left = left - canvasContainerRect.x;
       top = top - canvasContainerRect.y;
 
@@ -1457,14 +1283,17 @@ export default {
       activeTab.data.nodeList.push(node);
       this.$nextTick(function() {
         this.jsPlumb.makeSource(nodeId, this.jsplumbSourceOptions);
-        this.jsPlumb.makeTarget(nodeId, this.jsplumbTargetOptions);
+        if (nodeMenu.type !== 'table') {
+          this.jsPlumb.makeTarget(nodeId, this.jsplumbTargetOptions);
+        }
         this.jsPlumb.draggable(`${node.id}`, {
           containment: false,
-          stop: function() {
+          stop: function(el) {
             console.log('---------拖完了');
           },
-          drag: () => {
-            this.jsPlumb.repaintEverything();
+          drag: (e, ui) => {
+            // this.jsPlumb.setSuspendDrawing(false, true);
+            //   this.jsPlumb.repaintEverything();
           },
         });
       });
@@ -1479,9 +1308,7 @@ export default {
     },
     // 改变节点的位置
     changeNodeSite(data) {
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
+      const activeTab = this.activeTabItem;
       for (var i = 0; i < activeTab.data.nodeList.length; i++) {
         let node = activeTab.data.nodeList[i];
         if (node.id === data.nodeId) {
@@ -1493,11 +1320,30 @@ export default {
     clickNode({ id, type, tableId }) {
       this.activeElement = { type, nodeId: id, tableId };
     },
+    openPreview() {
+      const { type, nodeId } = this.activeElement;
+      switch (type) {
+        case 'table':
+          const activeTab = this.activeTabItem;
+          const node = activeTab.data.nodeList.find(
+            (item) => item.id == nodeId,
+          );
+          this.activeCondition = node.condition;
+          this.dataDetailComponent = true;
+          break;
+        case 'calculators':
+          this.calculatorDialogData = this.getCalculatorDialogData(nodeId);
+          if (!this.calculatorDialogData)
+            return this.$message.error(
+              '必须选择两个表连接算子，才能设置映射关系！',
+            );
+          this.calculatorDialogVisible = true;
+          break;
+      }
+    },
     //id 是算子的id
     getCalculatorDialogData(id) {
-      const activeTab = this.canvasTabList.find(
-        (item) => item.id == this.canvasActiveId,
-      );
+      const activeTab = this.activeTabItem;
       const line = activeTab.data.lineList.filter((item) => item.to == id);
       if (line.length < 2) {
         return false;
@@ -1591,10 +1437,10 @@ export default {
     editCanvasName(index) {
       this.$refs.rulesForm[0].validate((valid) => {
         if (valid) {
-          const isRepeat = this.canvasTabList.find(
+          const isRepeatIndex = this.canvasTabList.findIndex(
             (item) => item.name == this.nameValidateForm.name,
           );
-          if (isRepeat) {
+          if (isRepeatIndex >= 0 && isRepeatIndex != index) {
             return this.$message.error('任务名称重复！');
           }
           const tab = this.canvasTabList[index];
@@ -1646,6 +1492,10 @@ export default {
     padding: 0 20px;
     background: #fff;
     z-index: 2;
+
+    /* .panel__title {
+      margin: 0 20px;
+    } */
   }
 
   .right-part {
@@ -1653,6 +1503,7 @@ export default {
     height: calc(100vh - 60px);
     background: #fff;
     z-index: 2;
+    /* box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);s */
   }
 
   &-container {
@@ -1726,7 +1577,7 @@ export default {
       height: 100%;
 
       /deep/.el-tabs__nav {
-        border: 0;
+        border: 0 !important;
       }
 
       /deep/.el-tabs__nav-wrap {
@@ -1742,7 +1593,7 @@ export default {
       }
 
       /deep/.el-tabs__header {
-        padding: 0 300px 0 20px;
+        padding: 0 120px 0 20px;
         display: flex;
         align-items: flex-end;
         height: 60px;
@@ -1868,7 +1719,7 @@ export default {
       position: absolute;
       top: 13px;
       right: 20px;
-      width: 270px;
+      width: 90px;
       white-space: nowrap;
 
       .add-tabs {

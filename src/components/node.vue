@@ -2,18 +2,10 @@
   <div
     ref="node"
     :style="nodeContainerStyle"
-    @dblclick.stop.prevent="isOnlyTooltip ? null : openPreview()"
-    @click.stop.prevent="isOnlyTooltip ? null : openPreview()"
     @mouseup="isOnlyTooltip ? null : changeNodeSite()"
-    @mousemove="isOnlyTooltip ? null : mouseMove()"
-    @mousedown="isOnlyTooltip ? null : mouseDown()"
     :class="[node.type, ...nodeContainerClass]"
   >
-    <div
-      class="table-title"
-      @dblclick.stop.prevent="isOnlyTooltip ? null : openPreview()"
-      @click.stop.prevent="isOnlyTooltip ? null : openPreview()"
-    >
+    <div class="table-title">
       <!-- 节点类型的图标 -->
       <div class="node-left-ico" v-if="!isOnlyTooltip">
         <i
@@ -32,6 +24,7 @@
       <div
         v-if="node.type != 'export' && !isOnlyTooltip"
         class="flow-node-drag"
+        :class="{ active: !isCanDelete }"
       ></div>
       <el-tooltip
         class="item"
@@ -108,10 +101,14 @@ export default {
       },
       isCanDelete: true,
       clickFlag: false,
+      moveFlag: false,
       isHasRedMark: false,
+      lastMoveIndex: 0,
+      curMoveIndex: 0,
     };
   },
   created() {
+    this.checkIsHaveSourceMap();
     const isHaveParentNode = this.data.lineList.find(
       (item) => item.from == this.node.id,
     );
@@ -123,21 +120,15 @@ export default {
   },
   watch: {
     node: {
-      handler() {
-        if (this.node.type == 'calculators') {
-          if (this.node.sourceMap !== null) {
-            this.isHasRedMark = false;
-          } else {
-            this.isHasRedMark = true;
-          }
-        } else {
-          this.isHasRedMark = false;
-        }
+      async handler() {
+        await this.$nextTick();
+        this.checkIsHaveSourceMap();
       },
       deep: true,
     },
     data: {
-      handler() {
+      async handler() {
+        await this.$nextTick();
         const isHaveParentNode = this.data.lineList.find(
           (item) => item.from == this.node.id,
         );
@@ -146,15 +137,7 @@ export default {
         } else {
           this.isCanDelete = true;
         }
-        if (this.node.type == 'calculators') {
-          if (this.node.sourceMap !== null) {
-            this.isHasRedMark = false;
-          } else {
-            this.isHasRedMark = true;
-          }
-        } else {
-          this.isHasRedMark = false;
-        }
+        this.checkIsHaveSourceMap();
       },
       deep: true,
     },
@@ -184,6 +167,17 @@ export default {
     },
   },
   methods: {
+    checkIsHaveSourceMap() {
+      if (this.node.type == 'calculators') {
+        if (this.node.sourceMap !== null && this.node.sourceMap.length > 0) {
+          this.isHasRedMark = false;
+        } else {
+          this.isHasRedMark = true;
+        }
+      } else {
+        this.isHasRedMark = false;
+      }
+    },
     async deleteElement() {
       this.$emit('clickNode', {
         id: this.node.id,
@@ -191,13 +185,6 @@ export default {
       });
       await this.$nextTick();
       this.$emit('deleteElement');
-    },
-    async openPreview() {
-      this.clickNode();
-      await this.$nextTick();
-      if (this.clickFlag) {
-        this.$emit('openPreview');
-      }
     },
     // 点击节点
     clickNode() {
@@ -209,12 +196,17 @@ export default {
     },
     mouseDown() {
       this.clickFlag = true;
+      this.moveFlag = true;
     },
     mouseMove() {
-      this.clickFlag = false;
+      if (this.moveFlag) {
+        this.lastMoveIndex++;
+        this.clickFlag = false;
+      }
     },
     // 鼠标移动后抬起
     changeNodeSite() {
+      this.moveFlag = false;
       // 避免抖动
       if (
         this.node.left == this.$refs.node.style.left &&
@@ -293,6 +285,8 @@ export default {
   .table {
     &-title {
       display: flex;
+      cursor: pointer;
+      z-index: 3;
     }
 
     &-condition {
@@ -368,6 +362,10 @@ export default {
     background: #1879ff;
     border-radius: 50%;
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
+  }
+
+  &.active {
+    visibility: visible;
   }
 }
 

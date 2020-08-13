@@ -44,6 +44,12 @@ header {
   justify-content: center;
   background-color: #0a132b;
 
+  &,
+  * {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
   img {
     height: 20px;
     display: block;

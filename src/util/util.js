@@ -149,8 +149,6 @@ export function handleEchoJobData({ elementList, elementRelList }) {
           condition: element.tableConditionList,
         });
         break;
-      default:
-        break;
     }
   });
 
@@ -162,6 +160,114 @@ export function handleEchoJobData({ elementList, elementRelList }) {
   });
 
   return result;
+}
+
+export function changeNodePosition({ width, height }, data, level, preWidth) {
+  const defaultTableWidth = 350;
+  const defaultOtherWidth = 65;
+  const defaultHeight = 70;
+  const paddingTop = 20;
+  const paddingLeft = 40;
+  const defaultAllHeight = defaultHeight + paddingTop * 2;
+  const defaultAllTableWidth = defaultTableWidth + paddingLeft * 2;
+  const defaultAllOtherWidth = defaultOtherWidth + paddingLeft * 2;
+  const sameLevelNodeList = data.nodeList.filter(
+    (nodeItem) => nodeItem.level == level,
+  );
+  const levelCount = sameLevelNodeList.length;
+  if (levelCount == 0) {
+    return;
+  }
+
+  let currentWidth = defaultAllOtherWidth + preWidth;
+  const isHaveTable = sameLevelNodeList.find((node) => node.type == 'table');
+  if (isHaveTable) {
+    currentWidth = defaultAllTableWidth + preWidth;
+  }
+
+  sameLevelNodeList.forEach(async (node) => {
+    let calTop = 0;
+    if (levelCount % 2) {
+      const middleSort = parseInt(levelCount / 2) + 1;
+      //奇数
+      calTop =
+        height / 2 -
+        defaultAllHeight / 2 -
+        (middleSort - node.sort) * defaultAllHeight +
+        paddingTop;
+    } else {
+      const middleSort = parseInt(levelCount / 2);
+      //偶数
+      calTop =
+        height / 2 -
+        (middleSort - node.sort + 1) * defaultAllHeight +
+        paddingTop;
+    }
+    const calLeft = width - currentWidth + paddingLeft;
+    node.top = `${calTop}px`;
+    node.left = `${calLeft}px`;
+  });
+
+  changeNodePosition({ width, height }, data, level + 1, currentWidth);
+}
+
+export async function getTreeConstruction(data) {
+  return new Promise(async (resolve, reject) => {
+    const endPoints = new Set();
+    data.lineList.forEach((line) => {
+      endPoints.add(line.to);
+    });
+
+    for (let item of endPoints.values()) {
+      const isChild = data.lineList.find((line) => line.from == item);
+      if (isChild) {
+        endPoints.delete(item);
+      }
+    }
+    const endPoint = [...endPoints][0];
+    const endingNode = data.nodeList.find(
+      (nodeItem) => nodeItem.id == endPoint,
+    );
+    endingNode.level = 1;
+    endingNode.sort = 1;
+    const treeList = {
+      id: endPoint,
+      children: [],
+      levelCount: 1,
+      level: 1,
+    };
+    //找到终结点，开始递归children
+    treeList.children = getChildrenById(endPoint, data, 1, 1);
+    resolve({ data });
+  });
+}
+
+export function getChildrenById(parentId, data, level, sort) {
+  const childrenList = [];
+  const childRelation = data.lineList.filter((line) => line.to == parentId);
+  if (childRelation) {
+    level = level + 1;
+    childRelation.forEach((child, index) => {
+      const node = data.nodeList.find((nodeItem) => nodeItem.id == child.from);
+      const childSort = index + 1 + (sort - 1) * 2;
+      let childrenChildList = getChildrenById(
+        child.from,
+        data,
+        level,
+        childSort,
+      );
+      node.level = level;
+      node.sort = childSort;
+      childrenList.push({
+        id: child.from,
+        level,
+        children: childrenChildList,
+        levelCount: 0,
+      });
+    });
+  }
+
+  return childrenList;
 }
 
 export function getDaCoRelColContentList(calculatorId, lineList, nodeList) {
@@ -221,8 +327,6 @@ export function getElementList(data) {
         break;
       case 'export':
         type = 1;
-        break;
-      default:
         break;
     }
     result.push({

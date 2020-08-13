@@ -1,5 +1,5 @@
 <script>
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent } from '@vue/composition-api';
 import { Tooltip } from 'element-ui';
 import node from './node';
 export default defineComponent({
@@ -32,11 +32,8 @@ export default defineComponent({
     const deleteElement = () => {
       emit('deleteElement');
     };
-    const changeNodeSite = () => {
-      emit('changeNodeSite', props.data);
-    };
-    const openPreview = () => {
-      emit('openPreview');
+    const changeNodeSite = (data) => {
+      emit('changeNodeSite', data);
     };
     return () => {
       return (
@@ -65,7 +62,6 @@ export default defineComponent({
                 activeElement={props.activeElement}
                 onDeleteElement={deleteElement}
                 onChangeNodeSite={changeNodeSite}
-                onOpenPreview={openPreview}
                 onClickNode={clickNode}
               />
             </Tooltip>
@@ -79,7 +75,6 @@ export default defineComponent({
               activeElement={props.activeElement}
               onDeleteElement={deleteElement}
               onChangeNodeSite={changeNodeSite}
-              onOpenPreview={openPreview}
               onClickNode={clickNode}
             />
           )}

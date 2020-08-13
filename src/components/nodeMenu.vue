@@ -1,16 +1,5 @@
 <template>
   <div class="flow-menu" ref="tool">
-    <el-input
-      ref="condition"
-      class="condition"
-      v-model="params.condition"
-      suffix-icon="el-icon-search"
-      placeholder="请输入关键字，按“Enter”键查找"
-      @keyup.enter.native="
-        params.page = 1;
-        searchResult();
-      "
-    />
     <el-collapse v-model="currentMenu" accordion class="el-data-collision-menu">
       <el-collapse-item
         class="el-data-collision-submenu"
@@ -30,8 +19,9 @@
               v-for="(subMenu, key) in menu.children"
               :key="key"
               @end="end"
-              :draggable="status ? null : `.node-menu-li`"
-              :options="draggableOptions"
+              :draggable="`.node-menu-li`"
+              v-bind="draggableOptions"
+              :disabled="status ? true : false"
             >
               <div
                 :type="subMenu.type"
@@ -43,7 +33,7 @@
                 <i class="el-icon el-data-collision-table"></i>
                 <el-tooltip
                   class="item"
-                  effect="light"
+                  effect="dark"
                   :content="subMenu.name"
                   placement="top-start"
                 >
@@ -121,7 +111,6 @@ export default {
       this.menuList[0].children = [];
       try {
         const { data } = await getFolderAll(this.params);
-        console.log(data);
         const { list } = data;
         list.forEach((item) => {
           this.menuList[0].children.push({
@@ -174,14 +163,10 @@ export default {
   position: relative;
   height: calc(100% - 60px);
 
-  .condition {
-    margin-top: 20px;
-  }
-
   .el-data-collision {
     &-menu {
       position: relative;
-      height: calc(100% - 52px);
+      height: 100%;
       margin: 0 -10px;
       padding: 0 10px;
       border: 0;

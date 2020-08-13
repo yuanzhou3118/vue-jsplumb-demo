@@ -1,1 +1,3 @@
-# vue-jsplumb
+## License
+
+[MIT](./LICENSE)

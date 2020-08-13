@@ -8,16 +8,6 @@
       ></span>
     </div>
     <div class="task-container" v-if="!noRunTaskVisible">
-      <el-input
-        ref="condition"
-        v-model="params.condition"
-        suffix-icon="el-icon-search"
-        placeholder="请输入关键字，按“Enter”键查找"
-        @keyup.enter.native="
-          params.page = 1;
-          getTaskList();
-        "
-      />
       <div class="task-container__list" v-loading="loading">
         <template v-if="taskData && taskData.length > 0">
           <div
@@ -28,7 +18,10 @@
             class="task-container__item"
             :class="{ 'is-active': activeJobId == task.id }"
           >
-            <div class="task-container__item-title">
+            <div
+              class="task-container__item-title"
+              @click.self="previewTask(task, index)"
+            >
               <i
                 @click.self="previewTask(task, index)"
                 :class="{
@@ -72,6 +65,12 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
+            <div
+              class="task-container__item-content"
+              @click.self="previewTask(task, index)"
+            >
+              {{ task.timePeriodString }}
+            </div>
           </div>
         </template>
         <template v-if="(!taskData || taskData.length == 0) && !loading">
@@ -99,7 +98,10 @@
             class="task-container__item"
             :class="{ 'is-active': activeJobId == task.id }"
           >
-            <div class="task-container__item-title">
+            <div
+              class="task-container__item-title"
+              @click.self="previewTask(task, index)"
+            >
               <i
                 @click.self="previewTask(task, index)"
                 class="el-no-run-task"
@@ -129,6 +131,7 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
+            <div class="task-container__item-time">{{ task.timePeriod }}</div>
           </div>
         </template>
         <template v-if="(!taskData || taskData.length == 0) && !loading">
@@ -179,7 +182,6 @@ export default {
   },
   methods: {
     async handleCommand(command, id) {
-      const isHaveTab = this.tabs.find((tab) => tab.id == id);
       switch (command) {
         case '1':
           //运行
@@ -202,6 +204,7 @@ export default {
           break;
         case '3':
           //删除
+          const isHaveTab = this.tabs.find((tab) => tab.id == id);
           if (isHaveTab) {
             this.$emit('removeRepeatTaskTab', id);
           }
@@ -265,8 +268,8 @@ export default {
                 loadingTime:
                   startTime && endTime
                     ? (
-                        (new Date(startTime).getTime() -
-                          new Date(endTime).getTime()) /
+                        (new Date(endTime).getTime() -
+                          new Date(startTime).getTime()) /
                         1000
                       ).toFixed(2)
                     : null,
@@ -301,23 +304,26 @@ export default {
       const { data } = await getTaskList(this.params);
       data.forEach((item) => {
         let status = item.status;
-        const statusString = this.getStatusString(status);
+        const timePeriodString = this.getTimePeriodString(item);
         if (item.status != null) {
           if (this.params.taskStatus == 1) {
-            if (item.status > 0) {
-              this.taskData.push({
-                ...item,
-                loading: false,
-                status,
-                statusString,
-              });
-            }
-          } else {
+            status = status == 0 ? 5 : status;
+            const statusString = this.getStatusString(status);
             this.taskData.push({
               ...item,
               loading: false,
               status,
               statusString,
+              timePeriodString,
+            });
+          } else {
+            const statusString = this.getStatusString(status);
+            this.taskData.push({
+              ...item,
+              loading: false,
+              status,
+              statusString,
+              timePeriodString,
             });
           }
         }
@@ -326,6 +332,44 @@ export default {
         this.$emit('updateTaskTotal', data.length);
       }
       this.loading = false;
+    },
+    getTimePeriodString(task) {
+      let result = '';
+      if (task.isRepeat) {
+        switch (task.timingType) {
+          case 5:
+            result = `以${timingTypeString[task.timingType]}计算的时间间隔：${
+              task.day
+            }号 ${task.hour}时${task.minute}分${task.second}秒`;
+            break;
+          case 4:
+            const weekString = s_week.find((item) => item.value == task.week);
+            result = `以${timingTypeString[task.timingType]}计算的时间间隔：${
+              weekString.label
+            } ${task.hour}时${task.minute}分${task.second}秒`;
+            break;
+          case 3:
+            result = `以${timingTypeString[task.timingType]}计算的时间间隔：${
+              task.hour
+            }时${task.minute}分${task.second}秒`;
+            break;
+          case 2:
+            result = `以${timingTypeString[task.timingType]}计算的时间间隔： ${
+              task.hour
+            }时`;
+            break;
+          case 1:
+            result = `以${timingTypeString[task.timingType]}计算的时间间隔： ${
+              task.minute
+            }分`;
+            break;
+          default:
+            break;
+        }
+      } else {
+        result = `执行时间：${task.year}-${task.month}-${task.day} ${task.hour}:${task.minute}:${task.second}`;
+      }
+      return result;
     },
     getStatusString(status) {
       let string = '';
@@ -342,7 +386,8 @@ export default {
         case 4:
           string = '已中止';
           break;
-        default:
+        case 5:
+          string = '未执行';
           break;
       }
       return string;
@@ -544,6 +589,11 @@ export default {
       }
 
       &.task_4 {
+        color: #8a8a8a;
+        background-color: #ededed;
+      }
+
+      &.task_5 {
         color: #8a8a8a;
         background-color: #ededed;
       }
