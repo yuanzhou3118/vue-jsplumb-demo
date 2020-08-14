@@ -108,7 +108,7 @@ export const easyFlowMixin = {
         anchor: 'Continuous',
         allowLoopback: false,
         maxConnections: 1,
-        onMaxConnections: function(info, e) {
+        onMaxConnections: function(info) {
           console.log(`超过了最大值连线: ${info.maxConnections}`);
         },
       },

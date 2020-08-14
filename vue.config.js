@@ -1,9 +1,5 @@
 const path = require('path');
 
-const webpack = require('webpack');
-// 定义压缩文件类型
-const productionGzipExtensions = ['js', 'css'];
-
 const resolve = (dir) => {
   return path.join(__dirname, dir);
 };

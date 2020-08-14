@@ -149,6 +149,8 @@ export function handleEchoJobData({ elementList, elementRelList }) {
           condition: element.tableConditionList,
         });
         break;
+      default:
+        break;
     }
   });
 
@@ -212,7 +214,7 @@ export function changeNodePosition({ width, height }, data, level, preWidth) {
 }
 
 export async function getTreeConstruction(data) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     const endPoints = new Set();
     data.lineList.forEach((line) => {
       endPoints.add(line.to);
@@ -328,6 +330,8 @@ export function getElementList(data) {
       case 'export':
         type = 1;
         break;
+      default:
+        break;
     }
     result.push({
       tempId: parseInt(item.id),
@@ -366,6 +370,7 @@ export function deepEqual(x, y) {
     if (Object.keys(x).length != Object.keys(y).length) return false;
 
     for (var prop in x) {
+      // eslint-disable-next-line no-prototype-builtins
       if (y.hasOwnProperty(prop)) {
         if (!deepEqual(x[prop], y[prop])) {
           console.log(prop);

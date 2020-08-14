@@ -25,7 +25,7 @@ export default defineComponent({
     },
     status: { type: Number, default: null },
   },
-  setup(props, { emit, parent }) {
+  setup(props, { emit }) {
     const clickNode = () => {
       emit('clickNode', props.node);
     };
@@ -35,38 +35,24 @@ export default defineComponent({
     const changeNodeSite = (data) => {
       emit('changeNodeSite', data);
     };
-    return () => {
-      return (
-        <div>
-          {props.node.type == 'table' && (
-            <Tooltip
-              placement="top"
-              effect="dark"
-              popper-class="container_node-tooltip"
-            >
-              <div slot="content">
-                <node
-                  id={props.node.id}
-                  isOnlyTooltip={true}
-                  data={props.data}
-                  node={props.node}
-                  status={props.status}
-                  activeElement={props.activeElement}
-                />
-              </div>
+    return () => (
+      <div>
+        {props.node.type == 'table' && (
+          <Tooltip
+            placement="top"
+            effect="dark"
+            popper-class="container_node-tooltip"
+          >
+            <div slot="content">
               <node
                 id={props.node.id}
+                isOnlyTooltip={true}
                 data={props.data}
                 node={props.node}
                 status={props.status}
                 activeElement={props.activeElement}
-                onDeleteElement={deleteElement}
-                onChangeNodeSite={changeNodeSite}
-                onClickNode={clickNode}
               />
-            </Tooltip>
-          )}
-          {props.node.type != 'table' && (
+            </div>
             <node
               id={props.node.id}
               data={props.data}
@@ -77,10 +63,22 @@ export default defineComponent({
               onChangeNodeSite={changeNodeSite}
               onClickNode={clickNode}
             />
-          )}
-        </div>
-      );
-    };
+          </Tooltip>
+        )}
+        {props.node.type != 'table' && (
+          <node
+            id={props.node.id}
+            data={props.data}
+            node={props.node}
+            status={props.status}
+            activeElement={props.activeElement}
+            onDeleteElement={deleteElement}
+            onChangeNodeSite={changeNodeSite}
+            onClickNode={clickNode}
+          />
+        )}
+      </div>
+    );
   },
 });
 </script>

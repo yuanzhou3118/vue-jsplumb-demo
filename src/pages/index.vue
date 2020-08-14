@@ -484,7 +484,7 @@ export default {
       console.log(tab);
     },
     async resetFlowContainer() {
-      let { data, zoom, id } = this.canvasTabList.find(
+      let { data, id } = this.canvasTabList.find(
         (tabItem) => tabItem.id == this.canvasActiveId,
       );
 
@@ -542,7 +542,7 @@ export default {
         this.isCanRun = false;
         return;
       }
-      const { status, id, data } = this.canvasTabList.find(
+      const { status, data } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
       if (!status) {
@@ -574,7 +574,7 @@ export default {
     updateTaskTotal(val) {
       this.taskTotal = val;
     },
-    setCondition({ tableId, condition, tempId }) {
+    setCondition({ condition, tempId }) {
       const { data } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
@@ -624,7 +624,7 @@ export default {
       });
     },
     async clearCanvas() {
-      const { data, id, status } = this.canvasTabList.find(
+      const { data, status } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
       data.lineList = [];
@@ -802,14 +802,11 @@ export default {
           this.jsPlumb.makeTarget(`${node.id}`, this.jsplumbTargetOptions);
           this.jsPlumb.draggable(`${node.id}`, {
             containment: false,
-            stop: function(el) {
-              console.log('---------拖完了');
-            },
           });
         }
       }
       // 初始化连线
-      for (var i = 0; i < data.lineList.length; i++) {
+      for (let i = 0; i < data.lineList.length; i++) {
         let line = data.lineList[i];
         var connParam = {
           source: `${line.from}`,
@@ -859,7 +856,7 @@ export default {
         // 初始化节点
         this.loadEasyFlow();
         // 单点击了连接线, https://www.cnblogs.com/ysx215/p/7615677.html
-        this.jsPlumb.bind('click', (conn, originalEvent) => {
+        this.jsPlumb.bind('click', (conn) => {
           this.activeElement.type = 'line';
           this.activeElement.sourceId = conn.sourceId;
           this.activeElement.targetId = conn.targetId;
@@ -1047,7 +1044,6 @@ export default {
       const { data } = this.canvasTabList.find(
         (item) => item.id == this.canvasActiveId,
       );
-      const fromItem = data.nodeList.find((item) => item.id == from);
       const toItem = data.nodeList.find((item) => item.id == to);
       if (toItem.type == 'calculators') {
         this.clickNode({
@@ -1136,9 +1132,7 @@ export default {
       if (relation) {
         return this.$message.error('不能删除子节点！');
       }
-      const currentNode = activeTab.data.nodeList.find(
-        (item) => item.id == nodeId,
-      );
+      const currentNode = nodeList.find((item) => item.id == nodeId);
       this.$confirm('确定要删除节点' + currentNode.name + '?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1225,7 +1219,6 @@ export default {
       await this.$nextTick();
       const activeTab = this.activeTabItem;
       const flowContainer = this.$refs[`flowContainer_${activeTab.id}`][0];
-      const containerRect = flowContainer.getBoundingClientRect();
       if (nodeMenu.type == 'export') {
         const isHasExport = activeTab.data.nodeList.find(
           (node) => node.type == 'export',
@@ -1288,12 +1281,8 @@ export default {
         }
         this.jsPlumb.draggable(`${node.id}`, {
           containment: false,
-          stop: function(el) {
+          stop: function() {
             console.log('---------拖完了');
-          },
-          drag: (e, ui) => {
-            // this.jsPlumb.setSuspendDrawing(false, true);
-            //   this.jsPlumb.repaintEverything();
           },
         });
       });
@@ -1322,12 +1311,11 @@ export default {
     },
     openPreview() {
       const { type, nodeId } = this.activeElement;
+      const activeTab = this.activeTabItem;
+      let node = null;
       switch (type) {
         case 'table':
-          const activeTab = this.activeTabItem;
-          const node = activeTab.data.nodeList.find(
-            (item) => item.id == nodeId,
-          );
+          node = activeTab.data.nodeList.find((item) => item.id == nodeId);
           this.activeCondition = node.condition;
           this.dataDetailComponent = true;
           break;
@@ -1338,6 +1326,8 @@ export default {
               '必须选择两个表连接算子，才能设置映射关系！',
             );
           this.calculatorDialogVisible = true;
+          break;
+        default:
           break;
       }
     },
@@ -1370,7 +1360,6 @@ export default {
       }
       const currentTime = `${new Date().getTime()}`.substring(5);
       let name = `任务${currentTime}`;
-      const data = { ...this.dataInit };
       const id = this.getUUID();
       this.canvasTabList.push({
         name,

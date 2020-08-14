@@ -82,7 +82,7 @@
 
 <script>
 export default {
-  name: 'flow-node',
+  name: 'flow-panel-node',
   props: {
     node: Object,
     data: Object,
