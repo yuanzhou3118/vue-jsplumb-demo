@@ -5,6 +5,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "release": "semantic-release",
     "semantic-release": "semantic-release"
   },
   "dependencies": {
@@ -24,6 +25,8 @@
     "vuedraggable": "^2.24.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^9.1.1",
+    "@commitlint/config-conventional": "^9.1.1",
     "@vue/babel-preset-jsx": "^1.1.2",
     "@vue/cli-plugin-babel": "^4.5.3",
     "@vue/cli-plugin-eslint": "^4.4.0",
@@ -57,7 +60,8 @@
     "not dead"
   ],
   "gitHooks": {
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "commit-msg": "commitlint -E GIT_PARAMS"
   },
   "lint-staged": {
     "*.{js,vue}": [
