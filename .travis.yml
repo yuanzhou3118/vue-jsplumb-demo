@@ -1,0 +1,17 @@
+language: node_js
+
+node_js: 10.16.0
+
+install:
+  - yarn
+
+script:
+  - yarn lint
+
+after_success:
+  - yarn release
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
