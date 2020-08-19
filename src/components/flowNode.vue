@@ -1,9 +1,9 @@
 <script>
 import { defineComponent } from '@vue/composition-api';
 import { Tooltip } from 'element-ui';
-import node from './node';
+import flowPanelNode from './node';
 export default defineComponent({
-  name: 'flow-node',
+  name: 'flow-node-with-tooltip',
   props: {
     node: {
       type: Object,
@@ -44,7 +44,7 @@ export default defineComponent({
             popper-class="container_node-tooltip"
           >
             <div slot="content">
-              <node
+              <flowPanelNode
                 id={props.node.id}
                 isOnlyTooltip={true}
                 data={props.data}
@@ -53,7 +53,7 @@ export default defineComponent({
                 activeElement={props.activeElement}
               />
             </div>
-            <node
+            <flowPanelNode
               id={props.node.id}
               data={props.data}
               node={props.node}
@@ -66,7 +66,7 @@ export default defineComponent({
           </Tooltip>
         )}
         {props.node.type != 'table' && (
-          <node
+          <flowPanelNode
             id={props.node.id}
             data={props.data}
             node={props.node}

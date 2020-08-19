@@ -18,44 +18,29 @@
     "mockjs": "^1.1.0",
     "node-sass": "^4.14.1",
     "sass-loader": "^9.0.2",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-function-api": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@commitlint/cli": "^9.1.2",
-    "@commitlint/config-conventional": "^9.1.1",
-    "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/git": "^9.0.0",
+    "@commitlint/config-conventional": "^10.0.0",
+    "@semantic-release/changelog": "^3.0.4",
+    "@semantic-release/git": "^7.0.16",
     "@vue/babel-preset-jsx": "^1.1.2",
     "@vue/cli-plugin-babel": "^4.5.3",
     "@vue/cli-plugin-eslint": "^4.4.0",
-    "@vue/cli-service": "^4.4.0",
+    "@vue/cli-service": "^4.4.6",
     "@vue/composition-api": "^0.6.7",
     "all-contributors-cli": "^6.17.0",
-    "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.0.6",
     "babel-preset-vca-jsx": "^0.3.5",
     "babel-preset-vue": "^2.0.2",
-    "eslint": "^7.6.0",
-    "eslint-plugin-vue": "^6.2.2",
-    "semantic-release": "^17.1.1",
+    "eslint": "^6.6.0",
+    "eslint-plugin-vue": "^6.0.0",
+    "semantic-release": "^15.13.24",
     "vue-template-compiler": "^2.6.11",
     "vuedraggable": "^2.24.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
   },
   "browserslist": [
     "> 1%",

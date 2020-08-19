@@ -109,7 +109,7 @@
                 }"
               >
                 <template v-for="node in item.data.nodeList">
-                  <flowNode
+                  <flowNodeWithTooltip
                     :activeElement="activeElement"
                     :key="node.id"
                     :node="node"
@@ -120,7 +120,7 @@
                     @nodeRightMenu="nodeRightMenu"
                     @openPreview="openPreview"
                     @clickNode="clickNode"
-                  ></flowNode>
+                  />
                 </template>
               </div>
             </div>
@@ -231,7 +231,7 @@ import Tools from '../components/panelTools';
 import calculatorDialog from '../components/calculatorDialog';
 import nodeMenu from '../components/nodeMenu';
 import taskList from '../components/taskList';
-import flowNode from '../components/flowNode';
+import flowNodeWithTooltip from '../components/flowNode';
 import { calculators, draggableOptions, dataInit } from '../util/enum';
 import { easyFlowMixin } from '../util/mixins';
 import * as utils from '../util/util';
@@ -314,7 +314,7 @@ export default {
   },
   components: {
     Drawer,
-    flowNode,
+    flowNodeWithTooltip,
     nodeMenu,
     taskList,
     draggable,
