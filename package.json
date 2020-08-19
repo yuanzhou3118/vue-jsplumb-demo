@@ -4,6 +4,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test": "jest --passWithNoTests",
     "lint": "vue-cli-service lint",
     "release": "semantic-release",
     "semantic-release": "semantic-release"
@@ -22,6 +23,7 @@
     "vue-function-api": "^2.2.0"
   },
   "devDependencies": {
+    "jest": "^24.8.0",
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@commitlint/cli": "^9.1.2",
