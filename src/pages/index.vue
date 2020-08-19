@@ -231,7 +231,7 @@ import Tools from '../components/panelTools';
 import calculatorDialog from '../components/calculatorDialog';
 import nodeMenu from '../components/nodeMenu';
 import taskList from '../components/taskList';
-import flowNodeWithTooltip from '../components/flowNode';
+import flowNodeWithTooltip from '../components/flowNode.vue';
 import { calculators, draggableOptions, dataInit } from '../util/enum';
 import { easyFlowMixin } from '../util/mixins';
 import * as utils from '../util/util';

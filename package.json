@@ -34,7 +34,7 @@
     "@vue/cli-plugin-babel": "^4.5.3",
     "@vue/cli-plugin-eslint": "^4.4.0",
     "@vue/cli-service": "^4.4.6",
-    "@vue/composition-api": "^0.6.7",
+    "@vue/composition-api": "^1.0.0-beta.10",
     "all-contributors-cli": "^6.17.0",
     "babel-preset-vca-jsx": "^0.3.5",
     "babel-preset-vue": "^2.0.2",
