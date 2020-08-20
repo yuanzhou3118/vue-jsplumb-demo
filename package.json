@@ -1,6 +1,6 @@
 {
   "name": "vue-element-jsplumb",
-  "version": "0.0.0-development",
+  "version": "0.0.1-development",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
