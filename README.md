@@ -1,8 +1,10 @@
+# Vue Jsplumb Demo
+
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/22abb001-5af4-4c8e-ba58-47d57fd3b801/deploy-status)](https://app.netlify.com/sites/vue-jsplumb/deploys)
 
-Demo <https://vue-jsplumb.netlify.com>
+Demo see here <https://vue-jsplumb.netlify.com>
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
