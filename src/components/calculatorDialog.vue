@@ -12,6 +12,14 @@ import {
 import { defineComponent, ref, onMounted, watch } from '@vue/composition-api';
 import { handleTableElementContent, deepEqual } from '../util/util';
 import canvasTable from './canvasTable';
+
+export const ModuleTitle = ({ children, data, props: { showTips } }) => (
+  <div style="display: flex;align-items: center;" {...data}>
+    {showTips && <div class="blueTips"></div>}
+    <div class="moduleTitle">{children}</div>
+  </div>
+);
+
 export default defineComponent({
   name: 'calculator-dialog',
   props: {
@@ -277,9 +285,17 @@ export default defineComponent({
     const changeFiledList = ({ source, target }) => {
       sourceFiledList.value = source;
       targetFiledList.value = target;
-      sourceFiledList.value = parent.$removeRepeat(sourceFiledList.value, 'id');
-      targetFiledList.value = parent.$removeRepeat(targetFiledList.value, 'id');
+      sourceFiledList.value = removeRepeat(sourceFiledList.value, 'id');
+      targetFiledList.value = removeRepeat(targetFiledList.value, 'id');
     };
+
+    function removeRepeat(jsonArray, key) {
+      let hash = {};
+      return jsonArray.reduce(function(item, next) {
+        hash[next[key]] ? '' : (hash[next[key]] = true && item.push(next));
+        return item;
+      }, []);
+    }
 
     const changeTableItemName = async (type, item) => {
       switch (type) {
@@ -331,6 +347,8 @@ export default defineComponent({
           itemName.value = null;
           item.isShowInput = false;
           break;
+        default:
+          break;
       }
     };
 
@@ -351,14 +369,14 @@ export default defineComponent({
           class="calculator-dialog"
           visible={props.calculatorDialogVisible}
         >
-          <module-title slot="title">设置关联关系</module-title>
+          <ModuleTitle slot="title">设置关联关系</ModuleTitle>
           <div
             class={`calculator-dialog__content ${
               props.status ? `readOnly` : null
             }`}
           >
             <section>
-              <module-title class="calculator-dialog__content-title">
+              <ModuleTitle class="calculator-dialog__content-title">
                 <span>配置字段</span>
                 <Tooltip class="item" effect="light" placement="top-start">
                   <div slot="content">
@@ -371,7 +389,7 @@ export default defineComponent({
                     配置说明
                   </span>
                 </Tooltip>
-              </module-title>
+              </ModuleTitle>
               <div class="calculator-dialog__content-canvas">
                 <canvasTable
                   onCleanRelList={cleanRelList}
@@ -402,9 +420,9 @@ export default defineComponent({
               </div>
             </section>
             <section>
-              <module-title class="calculator-dialog__content-title">
+              <ModuleTitle class="calculator-dialog__content-title">
                 输出预览
-              </module-title>
+              </ModuleTitle>
               <div class="export-table el-table el-table--small" height={60}>
                 <div class="el-table__header-wrapper">
                   <table class="el-table__header">
@@ -677,5 +695,20 @@ export default defineComponent({
       }
     }
   }
+}
+.blueTips {
+  width: 3px;
+  height: 22px;
+  background: rgba(24, 144, 255, 1);
+  display: inline-block;
+}
+.moduleTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(51, 51, 51, 1);
+  line-height: 20px;
+  margin-left: 11px;
+  display: inline-flex;
+  align-items: center;
 }
 </style>

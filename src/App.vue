@@ -75,4 +75,9 @@ header {
 #app::-webkit-scrollbar {
   width: 0;
 }
+
+::-webkit-scrollbar-thumb {
+  background-color: #a1a3a9;
+  border-radius: 0.03rem;
+}
 </style>

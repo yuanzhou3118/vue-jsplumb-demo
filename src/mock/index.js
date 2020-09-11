@@ -66,7 +66,7 @@ Mock.mock(RegExp('/job/echo/' + '.*'), 'get', (options) => {
   };
 });
 Mock.mock(RegExp('/getTableHeadList' + '.*'), 'get', (options) => {
-  const tableId = options.split('?')[1].split('=')[1];
+  const tableId = options.url.split('?')[1].split('=')[1];
   let data = null;
   if (tableId % 2) {
     data = leftTable;
