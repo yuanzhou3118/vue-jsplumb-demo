@@ -1,6 +1,6 @@
 <template>
   <div class="panel">
-    <Drawer mode="left" :visible.sync="isShowNodeMenu" width="3.2">
+    <Drawer mode="left" :visible.sync="isShowNodeMenu" width="2.8">
       <div class="left-part">
         <div class="panel__title">数据源</div>
         <nodeMenu
@@ -46,7 +46,7 @@
                   :value="editCanvasNamePopover"
                   placement="bottom"
                   title="编辑任务名称"
-                  width="320"
+                  width="280"
                   :popper-options="{
                     boundariesElement: '.panel-container',
                     gpuAcceleration: false,
@@ -183,7 +183,6 @@
           v-if="activeTabItem && activeTabItem.data.nodeList.length > 0"
           @changeZoom="changeZoom"
           :zoom.sync="activeTabItem.zoom"
-          :status="activeTabItem.status"
           @resetFlowContainer="resetFlowContainer"
           :isCanZoomAdd.sync="isCanZoomAdd"
           :isCanZoomMinus.sync="isCanZoomMinus"
@@ -199,7 +198,7 @@
       mode="right"
       :visible.sync="isShowTaskList"
       @open="openTaskList"
-      width="3.6"
+      width="2.8"
     >
       <div class="right-part">
         <task-list
@@ -278,7 +277,7 @@ export default {
       },
 
       //tabs
-      panelContainerStyle: { width: `calc(100vw - 320px - 360px)` },
+      panelContainerStyle: { width: `calc(100vw - 280px - 280px)` },
       canvasActiveId: '',
       canvasTabList: [],
 
@@ -802,6 +801,9 @@ export default {
           this.jsPlumb.makeTarget(`${node.id}`, this.jsplumbTargetOptions);
           this.jsPlumb.draggable(`${node.id}`, {
             containment: false,
+            drag: (e, ui) => {
+              this.jsPlumb.setSuspendDrawing(false, true);
+            },
           });
         }
       }
@@ -1284,6 +1286,10 @@ export default {
           stop: function() {
             console.log('---------拖完了');
           },
+          drag: (e, ui) => {
+            this.jsPlumb.setSuspendDrawing(false, true);
+            //   this.jsPlumb.repaintEverything();
+          },
         });
       });
 
@@ -1453,11 +1459,11 @@ export default {
 
   &__title {
     position: relative;
-    height: 60px;
-    line-height: 60px;
+    height: 48px;
+    line-height: 48px;
     font-weight: 400;
     color: #333333;
-    font-size: 20px;
+    font-size: 18px;
 
     display: flex;
     align-items: center;
@@ -1476,9 +1482,9 @@ export default {
 
   .left-part {
     position: relative;
-    width: 320px;
+    width: 280px;
     height: calc(100vh - 60px);
-    padding: 0 20px;
+    padding: 0 15px;
     background: #fff;
     z-index: 2;
 
@@ -1488,7 +1494,7 @@ export default {
   }
 
   .right-part {
-    width: 360px;
+    width: 280px;
     height: calc(100vh - 60px);
     background: #fff;
     z-index: 2;
@@ -1585,13 +1591,13 @@ export default {
         padding: 0 120px 0 20px;
         display: flex;
         align-items: flex-end;
-        height: 60px;
+        height: 48px;
         border: 0;
         box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.1);
       }
 
       /deep/ .el-tabs__content {
-        height: calc(100% - 60px);
+        height: calc(100% - 48px);
         background: #f0f2f5;
 
         .el-tab-pane {
@@ -1706,7 +1712,7 @@ export default {
 
     .button-group {
       position: absolute;
-      top: 13px;
+      top: 8px;
       right: 20px;
       width: 90px;
       white-space: nowrap;

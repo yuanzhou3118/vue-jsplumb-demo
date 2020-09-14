@@ -2,7 +2,11 @@
   <div
     ref="node"
     :style="nodeContainerStyle"
+    @dblclick.stop.prevent="isOnlyTooltip ? null : openPreview()"
+    @click.stop.prevent="isOnlyTooltip ? null : openPreview()"
     @mouseup="isOnlyTooltip ? null : changeNodeSite()"
+    @mousemove="isOnlyTooltip ? null : mouseMove()"
+    @mousedown="isOnlyTooltip ? null : mouseDown()"
     :class="[node.type, ...nodeContainerClass]"
   >
     <div class="table-title">
@@ -203,6 +207,20 @@ export default {
         this.lastMoveIndex++;
         this.clickFlag = false;
       }
+    },
+    async openPreview() {
+      this.clickNode();
+      await this.$nextTick();
+      console.log(`clickFlag: ${this.clickFlag}`);
+      console.log(`moveFlag: ${this.moveFlag}`);
+      console.log(this.lastMoveIndex - this.curMoveIndex);
+      // if (this.clickFlag && !this.moveFlag) {
+      //   this.$emit('openPreview');
+      // }
+      if (this.lastMoveIndex == this.curMoveIndex) {
+        this.$emit('openPreview');
+      }
+      this.curMoveIndex = this.lastMoveIndex;
     },
     // 鼠标移动后抬起
     changeNodeSite() {

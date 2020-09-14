@@ -161,7 +161,7 @@ export default {
 <style lang="scss">
 .flow-menu {
   position: relative;
-  height: calc(100% - 60px);
+  height: calc(100% - 48px);
 
   .el-data-collision {
     &-menu {
@@ -236,7 +236,7 @@ export default {
     line-height: 20px;
     margin: 20px 0;
     display: block;
-    font-size: 18px;
+    font-size: 16px;
     color: #4a4a4a;
     display: inline-flex;
     justify-content: center;
@@ -262,7 +262,7 @@ export default {
     font-size: 14px;
     color: rgba(51, 51, 51, 1);
     border-radius: 5px;
-    padding: 0 13px 0 20px !important;
+    padding: 0 13px 0 15px !important;
     background: #f5f6f7;
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
 

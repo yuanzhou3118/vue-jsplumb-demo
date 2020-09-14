@@ -35,6 +35,9 @@ export default defineComponent({
     const changeNodeSite = (data) => {
       emit('changeNodeSite', data);
     };
+    const openPreview = () => {
+      emit('openPreview');
+    };
     return () => (
       <div>
         {props.node.type == 'table' && (
@@ -59,6 +62,7 @@ export default defineComponent({
               node={props.node}
               status={props.status}
               activeElement={props.activeElement}
+              onOpenPreview={openPreview}
               onDeleteElement={deleteElement}
               onChangeNodeSite={changeNodeSite}
               onClickNode={clickNode}
@@ -72,6 +76,7 @@ export default defineComponent({
             node={props.node}
             status={props.status}
             activeElement={props.activeElement}
+            onOpenPreview={openPreview}
             onDeleteElement={deleteElement}
             onChangeNodeSite={changeNodeSite}
             onClickNode={clickNode}

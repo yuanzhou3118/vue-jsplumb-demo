@@ -3,8 +3,6 @@ import {
   Dialog,
   Message,
   Button,
-  Table,
-  TableColumn,
   Tooltip,
   Input,
   MessageBox,

@@ -446,14 +446,18 @@ export default {
         z-index: 3;
         cursor: pointer;
       }
+
+      .el-icon-refresh-left {
+        margin: 0;
+      }
     }
 
     .task-container__list {
       overflow-y: scroll;
       overflow-x: hidden;
       position: relative;
-      padding: 20px;
-      height: calc(100% - 60px);
+      padding: 15px;
+      height: calc(100% - 48px);
 
       .not-find-img {
         height: 143px;
@@ -490,18 +494,17 @@ export default {
   }
 }
 .task-container {
-  padding: 0 20px;
-  margin: 20px 0;
+  padding: 15px 15px 0;
   position: relative;
-  height: calc(100% - 100px);
+  height: calc(100% - 48px);
 
   .task-container__list {
     overflow-y: scroll;
     overflow-x: hidden;
     position: relative;
-    margin: 0 -10px;
-    padding: 20px 10px 0;
-    height: calc(100% - 32px);
+    margin: -10px;
+    padding: 10px;
+    height: 100%;
   }
 
   .not-find-img {
@@ -604,13 +607,13 @@ export default {
 .panel {
   &__title {
     position: relative;
-    height: 60px;
-    line-height: 60px;
+    height: 48px;
+    line-height: 48px;
     font-weight: 400;
     color: #333333;
-    font-size: 20px;
+    font-size: 18px;
 
-    margin: 0 20px;
+    margin: 0 15px;
 
     display: flex;
     align-items: center;
@@ -647,7 +650,6 @@ export default {
     height: 20px;
     background: url(../assets/el-data-collision-task.png) center no-repeat;
     background-size: contain;
-    margin-right: 10px;
   }
 
   .el-success-task {
