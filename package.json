@@ -23,7 +23,7 @@
     "vue-function-api": "^2.2.0"
   },
   "devDependencies": {
-    "jest": "^24.8.0",
+    "jest": "^27.0.6",
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@commitlint/cli": "^9.1.2",
